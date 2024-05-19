@@ -1,0 +1,112 @@
+
+.icon{
+  /* margin-top: 0px;
+  margin-bottom: 0px;*/
+  margin-left: auto; 
+  padding-left: 0px;
+}
+
+#subtitle{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
+
+#title{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: auto;
+}
+
+.header_title{
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header_about{
+  text-align: center;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+header{
+  border-bottom: 2px solid red;
+}
+
+.about{
+  text-align: center;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.box{
+  display: flex;
+}
+
+#menters_list{
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  list-style-type: none;
+  padding: 0;
+}
+
+@media(min-width: 0px){
+  #menter_box{
+    width: 100%;
+  }
+  #menter_name{
+   font-size: 17px;
+  }
+}
+
+@media(min-width: 370px){
+  #menter_box{
+    width: 50%;
+  }
+  #menter_name{
+    font-size: 20px;
+  }
+}
+
+@media(min-width: 900px){
+  #menter_box{
+    width: 33.3%;
+  }
+  #menter_name{
+    font-size: 25px;
+  }
+}
+
+
+#menter_profile{
+  display: flex;
+  margin-top: 5px;
+}
+
+#menter_icon2{
+  height: 50px;
+  width: 50px;
+}
+
+#menter_name{
+  height: 50px;
+  font-weight: normal;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0;
+  margin-left: 5px;
+}
+
+
+
+
+
+
