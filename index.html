@@ -29,14 +29,14 @@
   <body>
   <div class="container"> 
     <header>
-      <div class="header_title">
+      <div class="header-title">
         <div class="icon">
           <img src="./app/image/shuzemi_icon.png">
         </div>
         <h3 id="subtitle">就活ゼミ</h3>
         <h1 id="title">メンター制度</h1>
       </div>
-      <div class="header_about">
+      <div class="header-about">
         <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
         <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
       </div>
@@ -49,18 +49,18 @@
       
       <!-- ここから下がメンバー一覧 -->
       <div class="box">
-        <ul id="menters_list">
+        <ul id="mentors-list">
           <!-- ▼▼これでメンター一人分▼▼ -->
-          <!-- <li id="menter_box">
-            <div id="menter_profile">
-              <img id = "menter_icon" src="./app/image/menter_icon.png">
-              <h1 id="menter_name">xxx xx</h1>
+          <!-- <li id="mentor-box">
+            <div id="mentor-profile">
+              <img id = "mentor-icon" src="./app/image/mentor-icon.png">
+              <h1 id="mentor-name">xxx xx</h1>
             </div>
-            <div id="menter_info">            
+            <div id="mentor-info">            
               <ul>
                 <li id="university">〇〇大学</li>
                 <li id="graduate">23卒</li>
-                <li id="job_category">情報通信・インターネット</li>
+                <li id="job-category">情報通信・インターネット</li>
               </ul>
             </div>
           </li> -->
@@ -71,7 +71,6 @@
     </div>
 
   </div>
-  </script>
 
     <!-- firebaseと接続してやり取りするコード -->
     <script>
@@ -92,7 +91,7 @@
         for(var i = 0; i < 5; i++){
           I = String(i);
           console.log(I, '回目');
-          getMenterData(I,email,password);
+          getMentorData(I,email,password);
         }
 
 
