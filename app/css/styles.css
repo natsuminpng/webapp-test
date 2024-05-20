@@ -18,14 +18,14 @@
   margin-right: auto;
 }
 
-.header_title{
+.header-title{
   display: flex;
   align-items: center;
   margin-left: auto;
   margin-right: auto;
 }
 
-.header_about{
+.header-about{
   text-align: center;
   width: 70%;
   margin-left: auto;
@@ -48,7 +48,7 @@ header{
   display: flex;
 }
 
-#menters_list{
+#mentors-list{
   width: 80%;
   margin-left: auto;
   margin-right: auto;
@@ -59,44 +59,44 @@ header{
 }
 
 @media(min-width: 0px){
-  #menter_box{
+  #mentor-box{
     width: 100%;
   }
-  #menter_name{
+  #mentor-name{
    font-size: 17px;
   }
 }
 
 @media(min-width: 370px){
-  #menter_box{
+  #mentor-box{
     width: 50%;
   }
-  #menter_name{
+  #mentor-name{
     font-size: 20px;
   }
 }
 
 @media(min-width: 900px){
-  #menter_box{
+  #mentor-box{
     width: 33.3%;
   }
-  #menter_name{
+  #mentor-name{
     font-size: 25px;
   }
 }
 
 
-#menter_profile{
+#mentor-profile{
   display: flex;
   margin-top: 5px;
 }
 
-#menter_icon2{
+#mentor-icon2{
   height: 50px;
   width: 50px;
 }
 
-#menter_name{
+#mentor-name{
   height: 50px;
   font-weight: normal;
   margin-top: 0;
