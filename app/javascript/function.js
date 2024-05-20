@@ -1,7 +1,7 @@
 // ---------------------
 // firestore から、情報を取得
 // ---------------------
-function getMenterData(doc_num,email,password){
+function getMentorData(doc_num,email,password){
   db.collection("TEST").doc(doc_num).onSnapshot((doc) => {
     // console.log("Current data: ", doc.data());
 
@@ -9,7 +9,7 @@ function getMenterData(doc_num,email,password){
     console.log(latestData);
     
     if(latestData != undefined){
-      listMenter(latestData,email,password);
+      listMentor(latestData,email,password);
     }
   });
 }
@@ -17,35 +17,35 @@ function getMenterData(doc_num,email,password){
 // ---------------------
 // メンター一覧に記載する、メンター１人分のBOXを追加
 // ---------------------
-function listMenter(latestData,email,password){
-  // menterを追加するコード
-  var list = document.getElementById('menters_list');
+function listMentor(latestData,email,password){
+  // mentorを追加するコード
+  var list = document.getElementById('mentors-list');
 
   // 追加する要素を作成
   // liの作成、追加
-  var menter_box = document.createElement('li');
-  menter_box.id = 'menter_box';
+  var mentor_box = document.createElement('li');
+  mentor_box.id = 'mentor-box';
 
   // メンターのアイコンと名前を表示するところの作成、追加
-  var menter_profile = document.createElement('div');
-  menter_profile.id = 'menter_profile';
-  var menter_icon = document.createElement('img');
-  // menter_icon.src = "./app/image/menter_icon.png";// DBから取得
-  menter_icon.id = 'menter_icon2';
+  var mentor_profile = document.createElement('div');
+  mentor_profile.id = 'mentor-profile';
+  var mentor_icon = document.createElement('img');
+  // mentor_icon.src = "./app/image/mentor_icon.png";// DBから取得
+  mentor_icon.id = 'mentor-icon2';
   // 画像をstorageから取得して表示
   login(email, password);
-  getImgFromStorage(storageRef,menter_icon.id);
+  getImgFromStorage(storageRef,mentor_icon.id);
 
-  menter_profile.appendChild(menter_icon);
-  var menter_name = document.createElement('h1');
-  menter_name.id = 'menter_name'
-  menter_name.textContent = latestData.menter[0]// DBから取得
-  menter_profile.appendChild(menter_name);
-  menter_box.appendChild(menter_profile);
+  mentor_profile.appendChild(mentor_icon);
+  var mentor_name = document.createElement('h1');
+  mentor_name.id = 'mentor-name'
+  mentor_name.textContent = latestData.menter[0]// DBから取得
+  mentor_profile.appendChild(mentor_name);
+  mentor_box.appendChild(mentor_profile);
 
   // メンターの情報を表示するところの作成、追加
-  var menter_info = document.createElement('div');
-  menter_info.id = 'menter_info';
+  var mentor_info = document.createElement('div');
+  mentor_info.id = 'mentor-info';
   var ul = document.createElement('ul');
   var university = document.createElement('li');
   university.id = 'university';
@@ -56,13 +56,13 @@ function listMenter(latestData,email,password){
   graduate.textContent = latestData.menter[2]// DBから取得
   ul.appendChild(graduate);
   var job_category = document.createElement('li');
-  job_category.id = 'job_category';
+  job_category.id = 'job-category';
   job_category.textContent = latestData.menter[3]// DBから取得
   ul.appendChild(job_category);
-  menter_info.appendChild(ul);
-  menter_box.appendChild(menter_info);
+  mentor_info.appendChild(ul);
+  mentor_box.appendChild(mentor_info);
 
-  list.appendChild(menter_box);
+  list.appendChild(mentor_box);
 
   
 }
@@ -122,7 +122,7 @@ function connectToStrage(){
 
   // // Points to 'images/space.jpg'
   // // Note that you can use variables to create child values
-  // var fileName = 'menter_icon2.png';
+  // var fileName = 'mentor_icon2.png';
   // var spaceRef = imagesRef.child(fileName);
 
   // // File path is 'images/space.jpg'
@@ -142,9 +142,9 @@ function connectToStrage(){
 // storage から画像を取得
 // ---------------------
 function getImgFromStorage(storageRef,iconId){
-  storageRef.child('menter_icon3.png').getDownloadURL()
+  storageRef.child('mentor_icon3.png').getDownloadURL()
     .then((url) => {
-      // `url` is the download URL for 'menter_icon3.png'
+      // `url` is the download URL for 'mentor_icon3.png'
 
       // This can be downloaded directly:
       var xhr = new XMLHttpRequest();
@@ -167,7 +167,7 @@ function getImgFromStorage(storageRef,iconId){
       console.log("エラーコード:", errorCode);
       console.log("エラーメッセージ:", errorMessage);
       var img = document.getElementById(iconId);
-      img.setAttribute('src', './app/image/menter_icon.png');
+      img.setAttribute('src', './app/image/mentor_icon.png');
     });
 }
 
@@ -177,7 +177,7 @@ function getImgFromStorage(storageRef,iconId){
 // ---------------------
 function getMetadata(){
   // Create a reference to the file whose metadata we want to retrieve
-  var forestRef = storageRef.child('menter_icon2.png');
+  var forestRef = storageRef.child('mentor_icon2.png');
   
   // Get metadata properties
   forestRef.getMetadata()
