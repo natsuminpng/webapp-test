@@ -21,6 +21,7 @@
     <!-- jsファイルとのリンク -->
     <script src="./app/javascript/config.js"></script>
     <script src="./app/javascript/function.js"></script>
+    <script src="./app/javascript/function_logic.js"></script>
 
     <!-- cssファイルとのリンク -->
     <link rel="stylesheet" href="./app/css/styles.css">
@@ -74,28 +75,27 @@
 
     <!-- firebaseと接続してやり取りするコード -->
     <script>
-        // See: https://support.google.com/firebase/answer/7015592
-
-        // Firebase初期化
-        firebase.initializeApp(firebaseConfig);
-
-        // Firestore参照
-        var db = firebase.firestore();
-
-        // サインアップ情報の取得
-        var {email, password} = getInfo();
-
-        // storage への接続
-        var storageRef = connectToStrage();
-
-        for(var i = 0; i < 5; i++){
-          I = String(i);
-          console.log(I, '回目');
-          getMentorData(I,email,password);
-        }
-
-
-    </script>
+      // Firebase初期化
+      firebase.initializeApp(firebaseConfig);
+  
+      // Firestore参照
+      var db = firebase.firestore();
+  
+      // サインアップ情報の取得
+      var {email, password} = getInfo();
+  
+      // storage への接続
+      var storageRef = connectToStorage();
+  
+      // firestoreから全てのメンターを取得
+      fetchAllMentors().then(mentors => {
+          // 取得したメンターをリスト表示
+          mentors.forEach(mentor => {
+              listMentor(mentor, email, password);
+          });
+      });
+  </script>
+  
 
 
   </body>
