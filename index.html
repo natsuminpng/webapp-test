@@ -17,7 +17,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
     
-
     <!-- jsファイルとのリンク -->
     <script src="./app/javascript/config.js"></script>
     <script src="./app/javascript/function.js"></script>
@@ -86,6 +85,7 @@
   
       // storage への接続
       var storageRef = connectToStorage();
+      console.log("storageref is ", storageRef);
   
       // firestoreから全てのメンターを取得
       fetchAllMentors().then(mentors => {

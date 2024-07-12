@@ -33,7 +33,7 @@ function connectToStorage(){
 function fetchAllMentors(){
   return new Promise((resolve, reject) => {
     let mentors = [];
-    db.collection("TEST").get().then((querySnapshot) => {
+    db.collection("TEST2").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         var mentor = doc.data();      
         if(mentor != undefined){
