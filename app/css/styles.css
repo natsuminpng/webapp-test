@@ -91,7 +91,7 @@ header{
   margin-top: 5px;
 }
 
-#mentor-icon2{
+#mentor-icon{
   height: 50px;
   width: 50px;
 }
@@ -105,7 +105,23 @@ header{
   margin-left: 5px;
 }
 
+th {
+  text-align: left;
+  color: #F2545F;
+}
 
+#mentor-detail {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+#section {
+  background-color: #eeeaea;
+}
+
+#mentor-detail table{
+  width: 100%;
+}
 
 
 
