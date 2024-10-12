@@ -85,13 +85,20 @@
   
       // storage への接続
       var storageRef = connectToStorage();
-      console.log("storageref is ", storageRef);
+      // console.log("storageref is ", storageRef);
   
       // firestoreから全てのメンターを取得
       fetchAllMentors().then(mentors => {
+          // console.log('mentors is');
+          // console.log(mentors);  
           // 取得したメンターをリスト表示
           mentors.forEach(mentor => {
-              listMentor(mentor, email, password);
+              // console.log('mentor is');
+              // console.log(mentor);
+              // console.log('URLパラメータ：' + mentor.urlParam);
+              var detailpage_link = 'detail.html?id=' + encodeURIComponent(mentor.urlParam);
+              listMentor(mentor, email, password, detailpage_link);
+
           });
       });
   </script>

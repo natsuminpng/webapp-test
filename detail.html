@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>メンター詳細</title>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+    <script src="./app/javascript/config.js"></script>
+    <script src="./app/javascript/function.js"></script>
+    <link rel="stylesheet" href="./app/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>メンター詳細</h1>
+        </header>
+        <div class="content">
+            <div id="mentor-detail">
+                <!-- メンターの詳細情報を表示する場所 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase初期化
+        firebase.initializeApp(firebaseConfig);
+
+        // Firestore参照
+        var db = firebase.firestore();
+
+        // URLパラメータからメンターのIDを取得
+        var params = new URLSearchParams(window.location.search);
+        var mentorId = params.get('id');
+
+        // メンターの詳細情報を取得して表示
+        db.collection('TEST2').doc(mentorId).get().then((doc) => {
+            if (doc.exists) {
+                var mentor = doc.data();
+                displayMentorDetails(mentor);
+            } else {
+                console.log('No such document!');
+            }
+        }).catch((error) => {
+            console.log('Error getting document:', error);
+        });
+
+        // メンターの詳細情報を表示する関数
+        function displayMentorDetails(mentor) {
+            var mentorDetailDiv = document.getElementById('mentor-detail');
+            var mentorProfile = `
+                <div id="mentor-profile">
+                    <img id="mentor-icon" src="${mentor.iconUrl}" alt="メンターのアイコン">
+                    <h1 id="mentor-name">${mentor.氏名}</h1>
+                </div>
+                <div id="mentor-info">
+                    <ul>
+                      <li id="university">出身大学: ${mentor.mentor['出身大学']}</li>
+                      <li id="graduate">卒業年: ${mentor.mentor['卒業した年']}</li>
+                      <li id="job-category">就職先業界: ${mentor.mentor['就職先業界']}</li>
+                      <li id="email">メールアドレス: ${mentor.mentor['連絡先']}</li>
+                    </ul>
+                </div>
+            `;
+            mentorDetailDiv.innerHTML = mentorProfile;
+        }
+    </script>
+</body>
+</html>
