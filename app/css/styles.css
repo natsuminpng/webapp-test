@@ -44,6 +44,14 @@ header{
   margin-right: auto;
 }
 
+.container{
+  align-items: center;
+}
+
+.content{
+  width: 70%;
+}
+
 .box{
   display: flex;
 }
@@ -89,6 +97,9 @@ header{
 #mentor-profile{
   display: flex;
   margin-top: 5px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #mentor-icon{
@@ -101,13 +112,24 @@ header{
   font-weight: normal;
   margin-top: 0;
   margin-bottom: 0;
-  margin-right: 0;
+  margin-right: auto;
   margin-left: 5px;
 }
 
 th {
   text-align: left;
   color: #F2545F;
+  vertical-align: top;
+}
+
+#mentor-detail {
+  margin-left: 10%;
+  margin-right: 500px;
+}
+
+#section {
+  background-color: #eeeaea;
+  color: black;
 }
 
 #mentor-detail {
@@ -115,14 +137,20 @@ th {
   margin-right: 10%;
 }
 
-#section {
-  background-color: #eeeaea;
-}
-
-#mentor-detail table{
+#mentor-detail table {
   width: 100%;
+  table-layout: fixed;
+  word-wrap: break-word;
 }
 
+#mentor-detail colgroup col:first-child {
+  width: 30%;
+}
+#mentor-detail colgroup col:last-child {
+  width: 70%;
+}
 
-
+.login-title{
+  margin: auto;
+}
 
