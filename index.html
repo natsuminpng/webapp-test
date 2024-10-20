@@ -1,110 +1,58 @@
-<!-- feature/new-design-index -->
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
+<head>
     <meta charset="utf-8">
-
-    <!-- 古いバージョンのIEでも最新のHTMLとCSS機能を使用してページを表示できるようにする -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <!-- ビューポートの幅（ページの表示領域）をデバイスのスクリーン幅に設定、モバイル端末でも適切に表示される -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>メンター一覧</title>
-
-    <!-- firebase SDKのインストール -->
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
-    
-    <!-- jsファイルとのリンク -->
     <script src="./app/javascript/config.js"></script>
     <script src="./app/javascript/function.js"></script>
     <script src="./app/javascript/function_logic.js"></script>
-
-    <!-- cssファイルとのリンク -->
-    <link rel="stylesheet" href="./app/css/styles.css">
-
-  </head>
-  <body>
-  <div class="container"> 
+    <link rel="stylesheet" href="./app/css/common.css">
+    <link rel="stylesheet" href="./app/css/index.css">
+</head>
+<body>
+<div class="container">
     <header>
-      <div class="site-title">
-        <div class="zemi-icon">
-          <img src="./app/image/shuzemi_icon.png">
+        <div class="site-title">
+            <div class="zemi-icon">
+                <img src="./app/image/shuzemi_icon.png">
+            </div>
+            <h3 id="zemi-name">就活ゼミ</h3>
+            <h1 id="title">メンター制度</h1>
         </div>
-        <h3 id="zemi-name">就活ゼミ</h3>
-        <h1 id="title">メンター制度</h1>
-      </div>
-      <div class="about">
-        <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
-        <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
-      </div>
+        <div class="about">
+            <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
+            <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
+        </div>
     </header>
     <div class="content">
-      <div class="about">
-        <h2>メンター一覧</h2>
-        <p>卒業生の名前をクリックすると、より詳細な情報を見ることができます。</p>
-      </div>
-      
-      <!-- ここから下がメンバー一覧 -->
-      <div class="box">
-        <ul id="mentors-list">
-          <!-- ▼▼これでメンター一人分▼▼ -->
-          <!-- <li id="mentor-box">
-            <div id="mentor-profile">
-              <img id = "mentor-icon" src="./app/image/mentor-icon.png">
-              <h1 id="mentor-name">xxx xx</h1>
-            </div>
-            <div id="mentor-info">            
-              <ul>
-                <li id="university">〇〇大学</li>
-                <li id="graduate">23卒</li>
-                <li id="job-category">情報通信・インターネット</li>
-              </ul>
-            </div>
-          </li> -->
-          <!-- ▲▲これでメンター一人分▲▲ -->
-        </ul>        
-      </div>
-
+        <div class="about">
+            <h2>メンター一覧</h2>
+            <p>卒業生の名前をクリックすると、より詳細な情報を見ることができます。</p>
+        </div>
+        <div class="box">
+            <ul id="mentors-list">
+                <!-- メンター一覧 -->
+            </ul>
+        </div>
     </div>
-
-  </div>
-
-    <!-- firebaseと接続してやり取りするコード -->
-    <script>
-      // Firebase初期化
-      firebase.initializeApp(firebaseConfig);
-  
-      // Firestore参照
-      var db = firebase.firestore();
-  
-      // サインアップ情報の取得
-      var {email, password} = getInfo();
-  
-      // storage への接続
-      var storageRef = connectToStorage();
-      // console.log("storageref is ", storageRef);
-  
-      // firestoreから全てのメンターを取得
-      fetchAllMentors().then(mentors => {
-          // console.log('mentors is');
-          // console.log(mentors);  
-          // 取得したメンターをリスト表示
-          mentors.forEach(mentor => {
-              // console.log('mentor is');
-              // console.log(mentor);
-              // console.log('URLパラメータ：' + mentor.urlParam);
-              var detailpage_link = 'detail.html?id=' + encodeURIComponent(mentor.urlParam);
-              listMentor(mentor, email, password, detailpage_link);
-
-          });
-      });
-  </script>
-  
-
-
-  </body>
+</div>
+<script>
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var {email, password} = getInfo();
+    var storageRef = connectToStorage();
+    fetchAllMentors().then(mentors => {
+        mentors.forEach(mentor => {
+            var detailpage_link = 'detail.html?id=' + encodeURIComponent(mentor.urlParam);
+            listMentor(mentor, email, password, detailpage_link);
+        });
+    });
+</script>
+</body>
 </html>
