@@ -11,7 +11,7 @@ function listMentor(mentor, detailpage_link) {
   mentor_icon.classList.add('mentor-icon');
 
   // Firestoreの画像取得を削除
-  mentor_icon.src = './app/image/mentor-icon.png'; // ローカルのパスを指定
+  mentor_icon.src = './app/image/mentor_icon.png'; // ローカルのパスを指定
 
   var mentor_name = document.createElement('h1');
   mentor_name.classList.add('mentor-name');
