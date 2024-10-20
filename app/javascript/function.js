@@ -1,7 +1,5 @@
-// ---------------------
-// メンター一覧に記載する、メンター１人分のBOXを追加
-// ---------------------
 function listMentor(mentor, email, password, detailpage_link) {
+  console.log("ここからlistMentor");
   var list = document.getElementById('mentors-list');
   var mentor_box = document.createElement('li');
   mentor_box.classList.add('mentor-box');
@@ -11,7 +9,9 @@ function listMentor(mentor, email, password, detailpage_link) {
 
   var mentor_icon = document.createElement('img');
   mentor_icon.classList.add('mentor-icon');
-  mentor_icon.src = '.\app\image\mentor_icon3.png';
+
+  // ローカルのアイコン画像を表示
+  mentor_icon.src = './app/image/mentor_icon2.png'; // ローカルのパスを指定
 
   var mentor_name = document.createElement('h1');
   mentor_name.classList.add('mentor-name');
@@ -44,8 +44,3 @@ function listMentor(mentor, email, password, detailpage_link) {
   mentor_box.appendChild(mentor_info);
   list.appendChild(mentor_box);
 }
-
-
-
-// ---------------------
-// ---------------------
