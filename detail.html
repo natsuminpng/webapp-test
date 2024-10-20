@@ -16,14 +16,18 @@
 <body>
     <div class="container">
         <header>
-          <div class="header-title">
-            <div class="icon">
-              <img src="./app/image/shuzemi_icon.png">
+            <div class="header-title">
+              <div class="icon">
+                <img src="./app/image/shuzemi_icon.png">
+              </div>
+              <h3 id="subtitle">就活ゼミ</h3>
+              <h1 id="title">メンター制度</h1>
             </div>
-            <h3 id="subtitle">就活ゼミ</h3>
-            <h1 id="title">メンター制度</h1>
-          </div>
-        </header>
+            <div class="header-about">
+              <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
+              <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
+            </div>
+          </header>
         <div class="content">
             <div id="mentor-detail">
                 <!-- メンターの詳細情報を表示する場所 -->
@@ -62,30 +66,22 @@
                   <img id="mentor-icon" src="${mentor.iconUrl}" alt="メンターのアイコン">
                   <h1 id="mentor-name">${mentor.mentor['氏名']}</h1>
                 </div>
-                <div id="mentor-profile2">
-                  <h3 id="section">プロフィール</h3>
-                  <table>
-                    <tr><th>自己紹介</th><td>初めまして〇〇です。</td></tr>
+                <table>
+                    <colgroup>
+                      <col style="width: 30%;">
+                      <col style="width: 70%;">
+                    </colgroup>
+                    <tr><th colspan=2 id="section">プロフィール</th></tr>
+                    <tr><th>自己紹介</th><td>初めまして〇〇です。XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</td></tr>
                     <tr id="email"><th>連絡先</th><td>${mentor.mentor['連絡先']}</td></tr>
-                  </table>
-                </div>                
-                <div id="mentor-info">
-                  <div id="mentor-academic-history">
-                    <h3 id="section">大学</h3>
-                    <table>                                          
-                      <h3 id="university">${mentor.mentor['出身大学']}　${mentor.mentor['卒業した年']}</h3>
-                      <tr><th>学部</th><td>〇〇学部XX学科</td></tr>
-                    </table>
-                  </div>
-                  <div id="mentor-carrer">
-                    <h3 id="section">仕事</h3>
-                    <table>
-                      <tr><th id="job-category">就職先業界</th><td>${mentor.mentor['就職先業界']}</td></tr>
-                      <tr><th id="occupation">職種</th></tr>
-                      <tr><th id="job">仕事内容</th></tr>
-                    </table>
-                  </div>
-                </div>
+                    <tr><th colspan=2 id="section">大学</th></tr>
+                    <tr><th id="university">${mentor.mentor['出身大学']}　${mentor.mentor['卒業した年']}</th></tr>
+                    <tr><th>学部</th><td>〇〇学部XX学科</td></tr>
+                    <tr><th colspan=2 id="section">仕事</th></tr>
+                    <tr><th id="job-category">就職先業界</th><td>${mentor.mentor['就職先業界']}</td></tr>
+                    <tr><th id="occupation">職種</th></tr>
+                    <tr><th id="job">仕事内容</th></tr>
+                </table>
             `;
             mentorDetailDiv.innerHTML = mentorProfile;
         }

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- CSSファイルとのリンク -->
+    <link rel="stylesheet" href="./app/css/styles.css">
+    <link rel="stylesheet" href="./app/css/styles_login.css">
+</head>
+<body>
+    <header>
+      <div class="header-title">
+        <div class="icon">
+          <img src="./app/image/shuzemi_icon.png">
+        </div>
+        <h3 id="subtitle">就活ゼミ</h3>
+        <h1 id="title">メンター制度</h1>
+      </div>
+      <div class="header-about">
+        <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
+        <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
+      </div>
+    </header>
+    <div class="login">
+      <div class="login-title">
+        <h2>ログイン</h2>
+        <p>登録したEmailとパスワードを入力して、loginを押してください。</p>
+      </div>
+        <!-- ユーザーがメールアドレスを入力するフィールド -->
+        <input type="email" id="email" placeholder="Email">
+        <!-- ユーザーがパスワードを入力するフィールド -->
+        <input type="password" id="password" placeholder="Password">
+        <!-- ログインボタン。クリックするとlogin関数が呼ばれます -->
+        <button onclick="login()">Login</button>
+    </div>
+    <!-- Firebaseのライブラリを読み込むためのスクリプト -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+    <script src="./app/javascript/config.js"></script>
+    <script>
+        // Firebaseを初期化
+        firebase.initializeApp(firebaseConfig);
+
+        // ログイン関数。ユーザーがボタンを押すと実行される
+        function login() {
+            // 入力されたメールアドレスとパスワードを取得
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            // Firebaseの認証機能を使ってログイン処理
+            firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // ログイン成功時の処理
+                window.location.href = "index.html"; // ログイン成功後、メンター一覧ページにリダイレクト
+            })
+            .catch((error) => {
+                // エラーが発生した場合の処理
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                alert(errorMessage); // エラーメッセージを表示
+            });
+        }
+    </script>
+</body>
+</html>
