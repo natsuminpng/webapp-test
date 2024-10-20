@@ -1,0 +1,50 @@
+.zemi-icon{
+  /* margin-top: 0px;
+  margin-bottom: 0px;*/
+  margin-left: auto; 
+  padding-left: 0px;
+}
+
+#zemi-name{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 10px;
+}
+
+#title{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: auto;
+}
+
+.site-title{
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.about{
+  text-align: center;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+
+}
+
+header{
+  border-bottom: 2px solid red;
+}
+
+.about{
+  text-align: center;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container{
+  align-items: center;
+}
+
+
