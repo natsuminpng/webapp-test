@@ -11,8 +11,7 @@ function listMentor(mentor, email, password, detailpage_link) {
 
   var mentor_icon = document.createElement('img');
   mentor_icon.classList.add('mentor-icon');
-  login(email, password);
-  getImgFromStorage(storageRef, mentor_icon);
+  mentor_icon.src = '.\app\image\mentor_icon3.png';
 
   var mentor_name = document.createElement('h1');
   mentor_name.classList.add('mentor-name');
