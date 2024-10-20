@@ -1,4 +1,4 @@
-function listMentor(mentor, email, password, detailpage_link) {
+function listMentor(mentor, detailpage_link) {
   console.log("ここからlistMentor");
   var list = document.getElementById('mentors-list');
   var mentor_box = document.createElement('li');
@@ -10,8 +10,8 @@ function listMentor(mentor, email, password, detailpage_link) {
   var mentor_icon = document.createElement('img');
   mentor_icon.classList.add('mentor-icon');
 
-  // ローカルのアイコン画像を表示
-  mentor_icon.src = './app/image/mentor_icon2.png'; // ローカルのパスを指定
+  // Firestoreの画像取得を削除
+  mentor_icon.src = './app/image/mentor-icon.png'; // ローカルのパスを指定
 
   var mentor_name = document.createElement('h1');
   mentor_name.classList.add('mentor-name');
