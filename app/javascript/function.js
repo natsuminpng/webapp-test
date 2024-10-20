@@ -1,7 +1,7 @@
 // ---------------------
 // メンター一覧に記載する、メンター１人分のBOXを追加
 // ---------------------
-function listMentor(mentor,email,password){
+function listMentor(mentor,email,password,detailpage_link){
   console.log("ここからlistMentor")
 
   // mentorを追加するコード
@@ -16,16 +16,28 @@ function listMentor(mentor,email,password){
   var mentor_profile = document.createElement('div');
   mentor_profile.id = 'mentor-profile';
   var mentor_icon = document.createElement('img');
-  // mentor_icon.src = "./app/image/mentor_icon.png";// DBから取得
-  // mentor_icon.src = "./app/image/mentor_icon3.png"
-  mentor_icon.id = 'mentor-icon2';
+  mentor_icon.id = 'mentor-icon';
+
   // 画像をstorageから取得して表示
   login(email, password);
   getImgFromStorage(storageRef,mentor_icon.id);
   mentor_profile.appendChild(mentor_icon);
+
+  // メンターの名前を表示するh1要素を作成
   var mentor_name = document.createElement('h1');
   mentor_name.id = 'mentor-name'
-  mentor_name.textContent = mentor.mentor["氏名"]// DBから取得
+
+  // <a>タグを作成
+  var link = document.createElement('a');
+  // リンクのhref属性にURLとパラメータを設定
+  link.href = detailpage_link;
+  // リンクのテキストにメンターの名前を設定
+  link.textContent = mentor.mentor["氏名"];
+
+  // リンクをh1要素に追加
+  mentor_name.appendChild(link);
+
+  // mentor_name.textContent = mentor.mentor['氏名']// DBから取得
   mentor_profile.appendChild(mentor_name);
   mentor_box.appendChild(mentor_profile);
 
@@ -51,10 +63,6 @@ function listMentor(mentor,email,password){
   list.appendChild(mentor_box);
   
 }
-
-
-// ---------------------
-// ---------------------
 
 
 // ---------------------

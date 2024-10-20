@@ -27,6 +27,7 @@ function connectToStorage(){
 }
 
 
+
 // ---------------------
 // firestore から、情報を取得
 // ---------------------
@@ -35,11 +36,13 @@ function fetchAllMentors(){
     let mentors = [];
     db.collection("TEST2").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        var mentor = doc.data();      
+        var mentor = doc.data();
         if(mentor != undefined){
+          mentor["urlParam"] = doc.id;
           mentors.push(mentor);
+          // mentors.push({ID:{docID: doc.id}});  // これで、pushはできた
         }
-      });
+        });
       resolve(mentors);
     }).catch((error) => {
       reject(error);
@@ -145,4 +148,40 @@ function login(email, password) {
       console.log("エラーコード:", errorCode);
       console.log("エラーメッセージ:", errorMessage);
     });
+}
+
+
+
+// ---------------------
+// firestore から、メンターの詳細情報を取得
+// ---------------------
+// これ、失敗した関数。多分使わない
+function fetchMentor(docId){
+  // Firestoreの参照を取得
+  var db = firebase.firestore();
+  var docRef = db.collection("TEST2").doc(docId);
+
+  return docRef.get().then((doc) => {
+    if (doc.exists) {
+      // ドキュメントデータを変数に格納
+      var data = doc.data();
+      var result = {
+        id: data.ID,
+        name: data.名前,
+        gender: data.性別,
+        almaMater: data.出身大学,
+        majorSubject: data.専攻科目,
+        affiliatedLab: data.所属研究室,
+        phoneNumber: data.電話番号,
+        address: data.住所
+      };
+      return result;
+    } else {
+      console.log("ドキュメントが存在しません");
+      return null;
+    }
+  }).catch((error) => {
+    console.log("エラー:", error);
+    return null;
+  });
 }
