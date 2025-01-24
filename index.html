@@ -50,7 +50,8 @@
     fetchAllMentors().then(mentors => {
         mentors.forEach(mentor => {
             var detailpage_link = 'detail.html?id=' + encodeURIComponent(mentor.urlParam);
-            listMentor(mentor, email, password, detailpage_link);
+            // console.log('detail.html?id=' + encodeURIComponent(mentor.urlParam));
+            listMentor(mentor, detailpage_link);
         });
     });
 </script>

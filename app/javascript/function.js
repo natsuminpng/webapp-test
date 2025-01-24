@@ -1,5 +1,5 @@
 function listMentor(mentor, detailpage_link) {
-  console.log("ここからlistMentor");
+
   var list = document.getElementById('mentors-list');
   var mentor_box = document.createElement('li');
   mentor_box.classList.add('mentor-box');
