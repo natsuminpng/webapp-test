@@ -1,7 +1,7 @@
 .box {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: center; /* カードを中央配置にする */
 }
 #mentors-list {
   width: 90%;
@@ -11,6 +11,7 @@
   flex-wrap: wrap;
   list-style-type: none;
   padding: 0;
+  justify-content: center; /* カードを中央配置にする */
   align-items: center;
 }
 .mentor-box {
@@ -24,14 +25,14 @@
   align-items: center;
   width: 100%;
 }
-@media (min-width: 576px) {
+@media (min-width: 360px) {
   .mentor-box {
-      width: 48%;
+      width: 35%;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 1086px) {
   .mentor-box {
-      width: 30%;
+      width: 20%;
   }
 }
 .mentor-profile {
