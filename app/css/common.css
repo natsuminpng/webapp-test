@@ -1,32 +1,48 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
 .zemi-icon {
   margin-left: auto;
   padding-left: 0px;
 }
+
 #zemi-name {
   margin-top: 0px;
   margin-bottom: 0px;
   margin-right: 10px;
 }
+
 #title {
   margin-top: 0px;
   margin-bottom: 0px;
   margin-right: auto;
 }
+
 .site-title {
   display: flex;
   align-items: center;
   margin-left: auto;
   margin-right: auto;
 }
+
 .about {
   text-align: center;
   width: 70%;
   margin-left: auto;
   margin-right: auto;
 }
+
 header {
   border-bottom: 2px solid red;
 }
+
 .container {
   align-items: center;
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
 }
