@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   justify-content: center; /* カードを中央配置にする */
 }
+
 #mentors-list {
   width: 90%;
   margin-left: auto;
@@ -14,8 +15,9 @@
   justify-content: center; /* カードを中央配置にする */
   align-items: center;
 }
+
 .mentor-box {
-  background-color: #f2eeee;
+  background-color: #fff;
   margin: 10px;
   padding: 10px;
   border-radius: 8px;
@@ -25,36 +27,43 @@
   align-items: center;
   width: 100%;
 }
+
 @media (min-width: 360px) {
   .mentor-box {
       width: 35%;
   }
 }
+
 @media (min-width: 1086px) {
   .mentor-box {
       width: 20%;
   }
 }
+
 .mentor-profile {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .mentor-icon {
   height: 80px;
   width: 80px;
   border-radius: 50%;
 }
+
 .mentor-name {
   font-size: 20px;
   font-weight: bold;
   margin-top: 10px;
 }
+
 .mentor-info ul {
   list-style-type: none;
   padding: 0;
   text-align: center;
 }
+
 .mentor-info li {
   margin-bottom: 5px;
 }
