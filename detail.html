@@ -28,8 +28,10 @@
               <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
               <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
             </div>
-          </header>
+            <button id="signOutButton">サインアウト</button>
+        </header>
         <div class="content">
+            <button id="backButton">戻る</button>
             <div id="mentor-detail">
                 <!-- メンターの詳細情報を表示する場所 -->
             </div>
@@ -93,6 +95,24 @@
             `;
             mentorDetailDiv.innerHTML = mentorProfile;
         }
+    
+        // サインアウト機能
+        const signOutButton = document.getElementById('signOutButton');
+        signOutButton.addEventListener('click', () => {
+        firebase.auth().signOut().then(() => {
+            alert('サインアウトしました。');
+            window.location.href = 'login.html'; // ログインページにリダイレクト
+        }).catch((error) => {
+            console.error('サインアウトエラー:', error);
+        });
+        });
+    
+
+        // 戻るボタン機能
+        const backButton = document.getElementById('backButton');
+        backButton.addEventListener('click', () => {
+        window.history.back(); // 前のページに戻る
+        });
     </script>
 </body>
 </html>

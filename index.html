@@ -29,6 +29,7 @@
             <p>ゼミ生が卒業生と連絡をとれるようにするための制度です。</p>
             <p>注意事項：卒業生の連絡先の取り扱いに注意してください。卒業生の許可なく第三者に連絡先を教えないでください。</p>
         </div>
+        <button id="signOutButton">サインアウト</button>
     </header>
     <div class="content">
         <div class="about">
@@ -54,6 +55,19 @@
             listMentor(mentor, detailpage_link);
         });
     });
-</script>
+
+  
+    // サインアウト機能
+    const signOutButton = document.getElementById('signOutButton');
+    signOutButton.addEventListener('click', () => {
+      firebase.auth().signOut().then(() => {
+        alert('サインアウトしました。');
+        window.location.href = 'login.html'; // ログインページにリダイレクト
+      }).catch((error) => {
+        console.error('サインアウトエラー:', error);
+      });
+    });
+  </script>
+  
 </body>
 </html>
