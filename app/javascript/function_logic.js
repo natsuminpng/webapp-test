@@ -34,15 +34,14 @@ function connectToStorage(){
 function fetchAllMentors(){
   return new Promise((resolve, reject) => {
     let mentors = [];
-    db.collection("TEST2").get().then((querySnapshot) => {
+    db.collection("mentors").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         var mentor = doc.data();
         if(mentor != undefined){
           mentor["urlParam"] = doc.id;
           mentors.push(mentor);
-          // mentors.push({ID:{docID: doc.id}});  // これで、pushはできた
         }
-        });
+      });
       resolve(mentors);
     }).catch((error) => {
       reject(error);

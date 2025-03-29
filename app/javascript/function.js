@@ -1,5 +1,4 @@
 function listMentor(mentor, detailpage_link) {
-
   var list = document.getElementById('mentors-list');
   var mentor_box = document.createElement('li');
   mentor_box.classList.add('mentor-box');
@@ -9,15 +8,13 @@ function listMentor(mentor, detailpage_link) {
 
   var mentor_icon = document.createElement('img');
   mentor_icon.classList.add('mentor-icon');
-
-  // Firestoreの画像取得を削除
-  mentor_icon.src = './app/image/mentor_icon.png'; // ローカルのパスを指定
+  mentor_icon.src = mentor.アイコンURL || './app/image/mentor_icon.png';
 
   var mentor_name = document.createElement('h1');
   mentor_name.classList.add('mentor-name');
   var link = document.createElement('a');
   link.href = detailpage_link;
-  link.textContent = mentor.mentor["氏名"];
+  link.textContent = mentor.氏名;
   mentor_name.appendChild(link);
 
   mentor_profile.appendChild(mentor_icon);
@@ -29,16 +26,16 @@ function listMentor(mentor, detailpage_link) {
   var ul = document.createElement('ul');
   var university = document.createElement('li');
   university.classList.add('university');
-  university.textContent = mentor.mentor["出身大学"];
+  university.textContent = mentor.出身大学;
   ul.appendChild(university);
   var graduate = document.createElement('li');
   graduate.classList.add('graduate');
-  graduate.textContent = mentor.mentor["卒業した年"];
+  graduate.textContent = mentor.卒業した年;
   ul.appendChild(graduate);
-  var job_category = document.createElement('li');
-  job_category.classList.add('job-category');
-  job_category.textContent = mentor.mentor["就職先業界"];
-  ul.appendChild(job_category);
+  var industry = document.createElement('li');
+  industry.classList.add('industry');
+  industry.textContent = mentor.就職先業界;
+  ul.appendChild(industry);
 
   mentor_info.appendChild(ul);
   mentor_box.appendChild(mentor_info);

@@ -33,7 +33,24 @@
         <div class="content">
             <button id="backButton">戻る</button>
             <div id="mentor-detail">
-                <!-- メンターの詳細情報を表示する場所 -->
+                <div class="profile-header">
+                    <img class="mentor-icon" src="./app/image/mentor_icon.png" alt="メンターのアイコン">
+                    <h1 class="mentor-name"></h1>
+                </div>
+                <table>
+                    <colgroup>
+                        <col style="width: 25%;">
+                        <col style="width: 75%;">
+                    </colgroup>
+                    <tr><th colspan=2 id="section">プロフィール</th></tr>
+                    <tr><th>氏名</th><td class="mentor-name-table"></td></tr>
+                    <tr><th>出身大学</th><td class="university"></td></tr>
+                    <tr><th>卒業年</th><td class="graduate"></td></tr>
+                    <tr><th>連絡先</th><td class="contact"></td></tr>
+                    <tr><th colspan=2 id="section">就職先情報</th></tr>
+                    <tr><th>就職先業界</th><td class="industry"></td></tr>
+                    <tr><th>会社名</th><td class="company"></td></tr>
+                </table>
             </div>
         </div>
     </div>
@@ -50,50 +67,28 @@
         var mentorId = params.get('id');
 
         // メンターの詳細情報を取得して表示
-        db.collection('TEST2').doc(mentorId).get().then((doc) => {
-            if (doc.exists) {
-                var mentor = doc.data();
-                displayMentorDetails(mentor);
-            } else {
-                console.log('No such document!');
-            }
+        fetchMentorDetail(mentorId).then((mentor) => {
+            displayMentorDetails(mentor);
         }).catch((error) => {
             console.log('Error getting document:', error);
         });
 
         // メンターの詳細情報を表示する関数
         function displayMentorDetails(mentor) {
-            var mentorDetailDiv = document.getElementById('mentor-detail');
-            var mentorProfile = `
-                <div id="mentor-profile">
-                  <img id="mentor-icon" src="${mentor.iconUrl}" alt="メンターのアイコン">
-                  <h1 id="mentor-name">${mentor.mentor['氏名']}</h1>
-                </div>
-                <table>
-                    <colgroup>
-                      <col style="width: 25%;">
-                      <col style="width: 75%;">
-                    </colgroup>
-                    <tr><th colspan=2 id="section">プロフィール</th></tr>
-                    <tr><th>出身大学</th><td>${mentor.mentor['出身大学']}</td></tr>
-                    <tr><th>卒業年</th><td>${mentor.mentor['卒業した年']}</td></tr>
-                    <tr><th>所属</th><td>${mentor.mentor['学部・学科・専攻']}</td></tr>
-                    <tr id="email"><th>連絡先</th><td>${mentor.mentor['連絡先']}</td></tr>
-                    <tr><th colspan=2 id="section">就職活動</th></tr>
-                    <tr><th>就職活動の軸</th><td>${mentor.mentor['就職活動の軸']}</td></tr>
-                    <tr><th>ガクチカ</th><td>${mentor.mentor['ガクチカ']}</td></tr>
-                    <tr><th>自己アピール</th><td>${mentor.mentor['自己アピール']}</td></tr>
-                    <tr><th>経験した選考</th><td>${mentor.mentor['経験した選考']}</td></tr>
-                    <tr><th colspan=2 id="section">仕事</th></tr>
-                    <tr><th id="job-category">就職先業界</th><td>${mentor.mentor['就職先業界']}</td></tr>
-                    <tr><th id="occupation">会社名</th><td>${mentor.mentor['自己アピール']}</td></tr>
-                    <tr><th id="occupation">職種</th><td>${mentor.mentor['職種']}</td></tr>
-                    <tr><th id="job">仕事内容</th><td>${mentor.mentor['仕事内容']}</td></tr>
-                    <tr><th colspan=2 id="section">学生のみなさんへメッセージ</th></tr>
-                    <td colspan=2>${mentor.mentor['学生に向けたメッセージ']}</td>
-                </table>
-            `;
-            mentorDetailDiv.innerHTML = mentorProfile;
+            // アイコン画像の表示
+            const iconImg = document.querySelector('.mentor-icon');
+            iconImg.src = mentor.アイコンURL || './app/image/mentor_icon.png';
+
+            // プロフィール情報の表示
+            document.querySelector('.mentor-name').textContent = mentor.氏名;
+            document.querySelector('.mentor-name-table').textContent = mentor.氏名;
+            document.querySelector('.university').textContent = mentor.出身大学;
+            document.querySelector('.graduate').textContent = mentor.卒業した年;
+            document.querySelector('.contact').textContent = mentor.連絡先;
+
+            // 就職情報の表示
+            document.querySelector('.industry').textContent = mentor.就職先業界;
+            document.querySelector('.company').textContent = mentor.会社名;
         }
     
         // サインアウト機能
@@ -113,6 +108,25 @@
         backButton.addEventListener('click', () => {
         window.history.back(); // 前のページに戻る
         });
+
+        // ---------------------
+        // firestore から、情報を取得
+        // ---------------------
+        function fetchMentorDetail(mentorId){
+          return new Promise((resolve, reject) => {
+            db.collection("mentors").doc(mentorId).get().then((doc) => {
+              if (doc.exists) {
+                var mentor = doc.data();
+                mentor["urlParam"] = doc.id;
+                resolve(mentor);
+              } else {
+                reject(new Error("No such document!"));
+              }
+            }).catch((error) => {
+              reject(error);
+            });
+          });
+        }
     </script>
 </body>
 </html>

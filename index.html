@@ -48,15 +48,56 @@
     var db = firebase.firestore();
     var {email, password} = getInfo();
     var storageRef = connectToStorage();
-    fetchAllMentors().then(mentors => {
-        mentors.forEach(mentor => {
-            var detailpage_link = 'detail.html?id=' + encodeURIComponent(mentor.urlParam);
-            // console.log('detail.html?id=' + encodeURIComponent(mentor.urlParam));
-            listMentor(mentor, detailpage_link);
-        });
-    });
 
-  
+    // メンター一覧を表示する関数
+    function displayMentors() {
+        const mentorsList = document.getElementById('mentors-list');
+        // 既存のメッセージをクリア
+        mentorsList.innerHTML = '';
+
+        fetchAllMentors()
+            .then(mentors => {
+                if (!mentors || mentors.length === 0) {
+                    // データが空の場合
+                    const emptyMessage = document.createElement('div');
+                    emptyMessage.className = 'empty-message';
+                    emptyMessage.textContent = 'メンターが登録されていません。';
+                    mentorsList.appendChild(emptyMessage);
+                    return;
+                }
+
+                // メンター一覧を表示
+                mentors.forEach(mentor => {
+                    listMentor(mentor, `detail.html?id=${mentor.urlParam}`);
+                });
+            })
+            .catch(error => {
+                console.error('メンターデータの取得に失敗:', error);
+                
+                // エラーメッセージを表示
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'error-message';
+                
+                // エラーの種類に応じてメッセージを変更
+                if (error.code === 'permission-denied') {
+                    errorMessage.textContent = 'アクセス権限がありません。ログインしてください。';
+                    // ログイン画面にリダイレクト
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else if (error.code === 'not-found') {
+                    errorMessage.textContent = 'データが見つかりません。';
+                } else {
+                    errorMessage.textContent = 'データの読み込みに失敗しました。時間をおいて再度お試しください。';
+                }
+                
+                mentorsList.appendChild(errorMessage);
+            });
+    }
+
+    // ページ読み込み時にメンター一覧を表示
+    window.addEventListener('load', displayMentors);
+
     // サインアウト機能
     const signOutButton = document.getElementById('signOutButton');
     signOutButton.addEventListener('click', () => {
@@ -67,7 +108,6 @@
         console.error('サインアウトエラー:', error);
       });
     });
-  </script>
-  
+</script>
 </body>
 </html>

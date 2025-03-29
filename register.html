@@ -191,7 +191,7 @@
                 const iconUrl = await iconRef.getDownloadURL();
 
                 // Firestoreにデータを保存
-                await db.collection('TEST2').add({
+                await db.collection('mentors').add({
                     氏名: formData.name,
                     出身大学: formData.university,
                     卒業した年: formData.graduationYear,
