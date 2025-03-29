@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>メンター登録 - メンター制度</title>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-storage.js"></script>
+    <script src="./app/javascript/config.js"></script>
+    <link rel="stylesheet" href="./app/css/common.css">
+    <link rel="stylesheet" href="./app/css/register.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="site-title">
+                <div class="zemi-icon">
+                    <img src="./app/image/shuzemi_icon.png">
+                </div>
+                <h3 id="zemi-name">就活ゼミ</h3>
+                <h1 id="title">メンター制度</h1>
+            </div>
+            <div class="about">
+                <p>メンター登録フォーム</p>
+                <p>以下の項目を入力して、登録ボタンを押してください。</p>
+            </div>
+        </header>
+        <div class="content">
+            <form id="mentorForm" class="mentor-form">
+                <div class="form-group">
+                    <label for="name">氏名 <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="university">大学 <span class="required">*</span></label>
+                    <input type="text" id="university" name="university" required>
+                    <div class="error-message" id="universityError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="graduationYear">大学卒業年 <span class="required">*</span></label>
+                    <input type="number" id="graduationYear" name="graduationYear" required>
+                    <div class="error-message" id="graduationYearError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">連絡先（メールアドレス） <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="industry">勤務先業界 <span class="required">*</span></label>
+                    <input type="text" id="industry" name="industry" required>
+                    <div class="error-message" id="industryError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="company">勤務先会社名 <span class="required">*</span></label>
+                    <input type="text" id="company" name="company" required>
+                    <div class="error-message" id="companyError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="icon">アイコン画像 <span class="required">*</span></label>
+                    <input type="file" id="icon" name="icon" accept="image/jpeg,image/png,image/gif" required>
+                    <div class="error-message" id="iconError"></div>
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-button">登録</button>
+                    <button type="button" class="cancel-button" onclick="window.history.back()">キャンセル</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Firebase初期化
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // バリデーション関数
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validateImage(file) {
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!validTypes.includes(file.type)) {
+                return '画像はJPEG、PNG、GIF形式のみアップロード可能です。';
+            }
+
+            if (file.size > maxSize) {
+                return '画像サイズは5MB以下にしてください。';
+            }
+
+            return null;
+        }
+
+        // エラーメッセージ表示関数
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        function clearError(elementId) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+
+        // 画像プレビュー機能
+        document.getElementById('icon').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const error = validateImage(file);
+                if (error) {
+                    showError('iconError', error);
+                    this.value = '';
+                    document.getElementById('imagePreview').innerHTML = '';
+                    return;
+                }
+
+                clearError('iconError');
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="プレビュー">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // フォーム送信処理
+        document.getElementById('mentorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // エラーメッセージをクリア
+            document.querySelectorAll('.error-message').forEach(el => clearError(el.id));
+
+            // バリデーション
+            let hasError = false;
+
+            // メールアドレスのバリデーション
+            const email = document.getElementById('email').value;
+            if (!validateEmail(email)) {
+                showError('emailError', '有効なメールアドレスを入力してください。');
+                hasError = true;
+            }
+
+            // 画像のバリデーション
+            const iconFile = document.getElementById('icon').files[0];
+            if (iconFile) {
+                const imageError = validateImage(iconFile);
+                if (imageError) {
+                    showError('iconError', imageError);
+                    hasError = true;
+                }
+            }
+
+            if (hasError) {
+                return;
+            }
+
+            // フォームデータの取得とサニタイズ
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                university: document.getElementById('university').value.trim(),
+                graduationYear: parseInt(document.getElementById('graduationYear').value),
+                email: email.trim(),
+                industry: document.getElementById('industry').value.trim(),
+                company: document.getElementById('company').value.trim(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                // アイコン画像のアップロード
+                const storageRef = storage.ref();
+                const iconRef = storageRef.child(`mentor-icons/${Date.now()}_${iconFile.name}`);
+                await iconRef.put(iconFile);
+                const iconUrl = await iconRef.getDownloadURL();
+
+                // Firestoreにデータを保存
+                await db.collection('TEST2').add({
+                    氏名: formData.name,
+                    出身大学: formData.university,
+                    卒業した年: formData.graduationYear,
+                    連絡先: formData.email,
+                    就職先業界: formData.industry,
+                    会社名: formData.company,
+                    アイコンURL: iconUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert('メンター登録が完了しました。');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
+                alert(`登録中にエラーが発生しました。\nエラーコード: ${error.code}\nエラーメッセージ: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html> 
