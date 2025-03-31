@@ -113,3 +113,81 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期セッションタイマーを開始
     startSessionTimer();
 });
+
+// 入力値のバリデーション関数
+function validateInput(input, type) {
+  // XSS対策：HTMLエスケープ
+  const escapedInput = input.replace(/[&<>"']/g, char => {
+    const entities = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+    return entities[char];
+  });
+
+  // 入力タイプに応じたバリデーション
+  switch (type) {
+    case 'email':
+      // メールアドレスの形式チェック
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(escapedInput)) {
+        throw new Error('有効なメールアドレスを入力してください');
+      }
+      break;
+
+    case 'password':
+      // パスワードの複雑さチェック
+      if (escapedInput.length < 8) {
+        throw new Error('パスワードは8文字以上で入力してください');
+      }
+      if (!/[A-Z]/.test(escapedInput)) {
+        throw new Error('パスワードには大文字を含める必要があります');
+      }
+      if (!/[a-z]/.test(escapedInput)) {
+        throw new Error('パスワードには小文字を含める必要があります');
+      }
+      if (!/[0-9]/.test(escapedInput)) {
+        throw new Error('パスワードには数字を含める必要があります');
+      }
+      break;
+
+    case 'text':
+      // テキストの長さチェック
+      if (escapedInput.length > 1000) {
+        throw new Error('テキストは1000文字以内で入力してください');
+      }
+      break;
+
+    case 'name':
+      // 名前の形式チェック
+      if (escapedInput.length < 2) {
+        throw new Error('名前は2文字以上で入力してください');
+      }
+      if (escapedInput.length > 50) {
+        throw new Error('名前は50文字以内で入力してください');
+      }
+      break;
+
+    default:
+      throw new Error('無効な入力タイプです');
+  }
+
+  return escapedInput;
+}
+
+// 特殊文字のエスケープ処理
+function escapeSpecialChars(input) {
+  return input.replace(/[&<>"']/g, char => {
+    const entities = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+    return entities[char];
+  });
+}
