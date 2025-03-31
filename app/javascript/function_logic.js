@@ -48,3 +48,68 @@ function fetchAllMentors(){
     });
   });
 }
+
+// ---------------------
+// 認証関連の関数
+// ---------------------
+
+// ログイン状態の確認
+function checkAuthState() {
+    return new Promise((resolve, reject) => {
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                resolve(user);
+            } else {
+                reject(new Error('ログインしていません'));
+            }
+        });
+    });
+}
+
+// セッションの永続化設定
+function setPersistence() {
+    return firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+}
+
+// パスワードリセットメールの送信
+function sendPasswordResetEmail(email) {
+    return firebase.auth().sendPasswordResetEmail(email);
+}
+
+// ログアウト
+function signOut() {
+    return firebase.auth().signOut();
+}
+
+// セッションタイムアウトの設定（30分）
+const SESSION_TIMEOUT = 30 * 60 * 1000; // ミリ秒
+
+// セッションタイムアウトの監視
+let sessionTimeout;
+
+function startSessionTimer() {
+    clearTimeout(sessionTimeout);
+    sessionTimeout = setTimeout(() => {
+        signOut().then(() => {
+            window.location.href = 'login.html?timeout=true';
+        }).catch((error) => {
+            console.error('ログアウトエラー:', error);
+        });
+    }, SESSION_TIMEOUT);
+}
+
+// ユーザーアクションでセッションタイマーをリセット
+function resetSessionTimer() {
+    startSessionTimer();
+}
+
+// ページ読み込み時にセッションタイマーを開始
+document.addEventListener('DOMContentLoaded', () => {
+    // ユーザーアクションでセッションタイマーをリセット
+    ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+        document.addEventListener(event, resetSessionTimer);
+    });
+    
+    // 初期セッションタイマーを開始
+    startSessionTimer();
+});
