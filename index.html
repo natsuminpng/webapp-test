@@ -50,49 +50,66 @@
     var storageRef = connectToStorage();
 
     // メンター一覧を表示する関数
-    function displayMentors() {
+    async function displayMentors() {
         const mentorsList = document.getElementById('mentors-list');
         // 既存のメッセージをクリア
         mentorsList.innerHTML = '';
 
-        fetchAllMentors()
-            .then(mentors => {
-                if (!mentors || mentors.length === 0) {
-                    // データが空の場合
-                    const emptyMessage = document.createElement('div');
-                    emptyMessage.className = 'empty-message';
-                    emptyMessage.textContent = 'メンターが登録されていません。';
-                    mentorsList.appendChild(emptyMessage);
-                    return;
-                }
+        try {
+            // 認証状態の確認
+            const user = await checkAuthState();
+            
+            // アクセス権限の確認
+            const hasAccess = await checkAccess(user.uid, USER_ROLES.STUDENT);
+            if (!hasAccess) {
+                throw new Error('アクセス権限がありません。');
+            }
 
-                // メンター一覧を表示
-                mentors.forEach(mentor => {
-                    listMentor(mentor, `detail.html?id=${mentor.urlParam}`);
-                });
-            })
-            .catch(error => {
-                console.error('メンターデータの取得に失敗:', error);
-                
-                // エラーメッセージを表示
-                const errorMessage = document.createElement('div');
-                errorMessage.className = 'error-message';
-                
-                // エラーの種類に応じてメッセージを変更
-                if (error.code === 'permission-denied') {
-                    errorMessage.textContent = 'アクセス権限がありません。ログインしてください。';
-                    // ログイン画面にリダイレクト
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
-                } else if (error.code === 'not-found') {
-                    errorMessage.textContent = 'データが見つかりません。';
-                } else {
-                    errorMessage.textContent = 'データの読み込みに失敗しました。時間をおいて再度お試しください。';
-                }
-                
-                mentorsList.appendChild(errorMessage);
+            const mentors = await fetchAllMentors();
+            if (!mentors || mentors.length === 0) {
+                // データが空の場合
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'empty-message';
+                emptyMessage.textContent = 'メンターが登録されていません。';
+                mentorsList.appendChild(emptyMessage);
+                return;
+            }
+
+            // メンター一覧を表示
+            mentors.forEach(mentor => {
+                listMentor(mentor, `detail.html?id=${mentor.urlParam}`);
             });
+        } catch (error) {
+            console.error('メンターデータの取得に失敗:', error);
+            
+            // エラーメッセージを表示
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'error-message';
+            
+            // エラーの種類に応じてメッセージを変更
+            if (error.message === 'ログインしていません') {
+                errorMessage.textContent = 'ログインが必要です。';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else if (error.message === 'アクセス権限がありません。') {
+                errorMessage.textContent = 'このページにアクセスする権限がありません。';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else if (error.code === 'permission-denied') {
+                errorMessage.textContent = 'アクセス権限がありません。ログインしてください。';
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else if (error.code === 'not-found') {
+                errorMessage.textContent = 'データが見つかりません。';
+            } else {
+                errorMessage.textContent = 'データの読み込みに失敗しました。時間をおいて再度お試しください。';
+            }
+            
+            mentorsList.appendChild(errorMessage);
+        }
     }
 
     // ページ読み込み時にメンター一覧を表示

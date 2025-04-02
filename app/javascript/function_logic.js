@@ -191,3 +191,186 @@ function escapeSpecialChars(input) {
     return entities[char];
   });
 }
+
+// ログイン試行回数の管理
+const MAX_LOGIN_ATTEMPTS = 5;  // 最大試行回数
+const LOCKOUT_DURATION = 30 * 60 * 1000;  // ロックアウト時間（30分）
+
+// ログイン試行回数を保存するオブジェクト
+const loginAttempts = {
+  count: 0,
+  lastAttempt: null,
+  lockedUntil: null
+};
+
+// ログイン試行回数をチェックする関数
+function checkLoginAttempts(email) {
+  const now = new Date().getTime();
+  
+  // ロックアウト期間が終了しているかチェック
+  if (loginAttempts.lockedUntil && now > loginAttempts.lockedUntil) {
+    // ロックアウト期間終了後はカウントをリセット
+    loginAttempts.count = 0;
+    loginAttempts.lockedUntil = null;
+  }
+  
+  // アカウントがロックされているかチェック
+  if (loginAttempts.lockedUntil && now <= loginAttempts.lockedUntil) {
+    const remainingTime = Math.ceil((loginAttempts.lockedUntil - now) / 60000);
+    throw new Error(`アカウントがロックされています。${remainingTime}分後に再試行してください。`);
+  }
+  
+  return true;
+}
+
+// ログイン試行回数を更新する関数
+function updateLoginAttempts(success) {
+  const now = new Date().getTime();
+  
+  if (success) {
+    // ログイン成功時はカウントをリセット
+    loginAttempts.count = 0;
+    loginAttempts.lastAttempt = null;
+    loginAttempts.lockedUntil = null;
+  } else {
+    // ログイン失敗時はカウントを増やす
+    loginAttempts.count++;
+    loginAttempts.lastAttempt = now;
+    
+    // 最大試行回数を超えた場合はアカウントをロック
+    if (loginAttempts.count >= MAX_LOGIN_ATTEMPTS) {
+      loginAttempts.lockedUntil = now + LOCKOUT_DURATION;
+      throw new Error(`ログイン試行回数が上限を超えました。30分後に再試行してください。`);
+    }
+    
+    // 残り試行回数を表示
+    const remainingAttempts = MAX_LOGIN_ATTEMPTS - loginAttempts.count;
+    throw new Error(`ログインに失敗しました。あと${remainingAttempts}回試行できます。`);
+  }
+}
+
+// ログイン処理を強化した関数
+async function enhancedLogin(email, password) {
+  try {
+    // 入力値のバリデーション
+    const validatedEmail = validateInput(email, 'email');
+    const validatedPassword = validateInput(password, 'password');
+    
+    // ログイン試行回数をチェック
+    checkLoginAttempts(validatedEmail);
+    
+    // Firebase認証
+    const userCredential = await firebase.auth().signInWithEmailAndPassword(validatedEmail, validatedPassword);
+    
+    // ログイン成功時の処理
+    updateLoginAttempts(true);
+    await setPersistence();  // セッション永続性の設定
+    startSessionTimer();     // セッションタイマーの開始
+    
+    return userCredential.user;
+  } catch (error) {
+    // ログイン失敗時の処理
+    updateLoginAttempts(false);
+    throw error;
+  }
+}
+
+// ユーザーロールの定義
+const USER_ROLES = {
+  ADMIN: 'admin',
+  MENTOR: 'mentor',
+  STUDENT: 'student'
+};
+
+// ユーザーロールの確認
+async function checkUserRole(userId) {
+  try {
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      return userDoc.data().role || USER_ROLES.STUDENT;
+    }
+    return USER_ROLES.STUDENT;
+  } catch (error) {
+    console.error('ロール確認エラー:', error);
+    return USER_ROLES.STUDENT;
+  }
+}
+
+// アクセス権限の確認
+async function checkAccess(userId, requiredRole) {
+  const userRole = await checkUserRole(userId);
+  const roleHierarchy = {
+    [USER_ROLES.ADMIN]: 3,
+    [USER_ROLES.MENTOR]: 2,
+    [USER_ROLES.STUDENT]: 1
+  };
+  return roleHierarchy[userRole] >= roleHierarchy[requiredRole];
+}
+
+// メンター登録時の認証処理
+async function registerMentor(userData) {
+  try {
+    // メールアドレスの重複チェック
+    const existingUser = await db.collection('users')
+      .where('email', '==', userData.email)
+      .get();
+
+    if (!existingUser.empty) {
+      throw new Error('このメールアドレスは既に登録されています。');
+    }
+
+    // Firebase認証でユーザーを作成
+    const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+      userData.email,
+      userData.password
+    );
+
+    // ユーザー情報をFirestoreに保存
+    await db.collection('users').doc(userCredential.user.uid).set({
+      email: userData.email,
+      role: USER_ROLES.MENTOR,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      ...userData
+    });
+
+    return userCredential.user;
+  } catch (error) {
+    console.error('メンター登録エラー:', error);
+    throw error;
+  }
+}
+
+// セッション管理の強化
+function setupSessionManagement() {
+  // アクティビティ監視
+  let lastActivity = Date.now();
+  const ACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5分
+
+  // アクティビティの更新
+  function updateActivity() {
+    lastActivity = Date.now();
+  }
+
+  // アクティビティチェック
+  function checkActivity() {
+    const now = Date.now();
+    if (now - lastActivity > ACTIVITY_TIMEOUT) {
+      signOut().then(() => {
+        window.location.href = 'login.html?timeout=true';
+      });
+    }
+  }
+
+  // イベントリスナーの設定
+  ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+    document.addEventListener(event, updateActivity);
+  });
+
+  // 定期的なアクティビティチェック
+  setInterval(checkActivity, 60000); // 1分ごとにチェック
+}
+
+// ページ読み込み時のセッション管理の初期化
+document.addEventListener('DOMContentLoaded', () => {
+  setupSessionManagement();
+});

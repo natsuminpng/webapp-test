@@ -71,6 +71,12 @@
                     <div id="imagePreview" class="image-preview"></div>
                 </div>
 
+                <div class="form-group">
+                    <label for="password">パスワード <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="submit-button">登録</button>
                     <button type="button" class="cancel-button" onclick="window.history.back()">キャンセル</button>
@@ -168,6 +174,13 @@
                 }
             }
 
+            // パスワードのバリデーション
+            const password = document.getElementById('password').value;
+            if (password.length < 8) {
+                showError('passwordError', 'パスワードは8文字以上にしてください。');
+                hasError = true;
+            }
+
             if (hasError) {
                 return;
             }
@@ -180,18 +193,22 @@
                 email: email.trim(),
                 industry: document.getElementById('industry').value.trim(),
                 company: document.getElementById('company').value.trim(),
+                password: document.getElementById('password').value,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             try {
+                // メンター登録処理
+                const user = await registerMentor(formData);
+
                 // アイコン画像のアップロード
                 const storageRef = storage.ref();
-                const iconRef = storageRef.child(`mentor-icons/${Date.now()}_${iconFile.name}`);
+                const iconRef = storageRef.child(`mentor-icons/${user.uid}_${iconFile.name}`);
                 await iconRef.put(iconFile);
                 const iconUrl = await iconRef.getDownloadURL();
 
-                // Firestoreにデータを保存
-                await db.collection('mentors').add({
+                // Firestoreにメンターデータを保存
+                await db.collection('mentors').doc(user.uid).set({
                     氏名: formData.name,
                     出身大学: formData.university,
                     卒業した年: formData.graduationYear,
