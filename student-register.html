@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生登録 - 就活ゼミ</title>
+    <link rel="stylesheet" href="./app/css/login.css">
+    <link rel="stylesheet" href="./app/css/common.css">
+    <style>
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: #65a4a4;
+            box-shadow: 0 0 5px rgba(101, 164, 164, 0.2);
+        }
+        
+        .password-requirements {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .password-strength {
+            height: 5px;
+            background-color: #ddd;
+            margin-top: 5px;
+            border-radius: 2px;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        
+        .weak { background-color: #ff5252; width: 33%; }
+        .medium { background-color: #ffd740; width: 66%; }
+        .strong { background-color: #4caf50; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="site-title">
+                <div class="zemi-icon">
+                    <img src="./app/image/shuzemi_icon.png">
+                </div>
+                <h3 id="zemi-name">就活ゼミ</h3>
+                <h1 id="title">学生登録</h1>
+            </div>
+            <div class="about">
+                <p>学生アカウントを作成するには、以下の情報を入力してください。</p>
+                <p>登録後、メールアドレスに確認メールが送信されます。</p>
+            </div>
+        </header>
+        <div class="login-box">
+            <h2>学生登録フォーム</h2>
+            <div id="error-message" class="error-message"></div>
+            <form id="studentRegisterForm">
+                <div class="form-group">
+                    <label for="name">氏名</label>
+                    <input type="text" id="name" name="name" required>
+                    <div id="nameError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="studentId">学籍番号</label>
+                    <input type="text" id="studentId" name="studentId" required>
+                    <div id="studentIdError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="faculty">学部</label>
+                    <select id="faculty" name="faculty" required>
+                        <option value="">選択してください</option>
+                        <option value="文学部">文学部</option>
+                        <option value="教育学部">教育学部</option>
+                        <option value="法学部">法学部</option>
+                        <option value="経済学部">経済学部</option>
+                        <option value="商学部">商学部</option>
+                        <option value="理学部">理学部</option>
+                        <option value="工学部">工学部</option>
+                        <option value="農学部">農学部</option>
+                        <option value="医学部">医学部</option>
+                        <option value="薬学部">薬学部</option>
+                        <option value="その他">その他</option>
+                    </select>
+                    <div id="facultyError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="department">学科</label>
+                    <input type="text" id="department" name="department" required>
+                    <div id="departmentError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="grade">学年</label>
+                    <select id="grade" name="grade" required>
+                        <option value="">選択してください</option>
+                        <option value="1">1年</option>
+                        <option value="2">2年</option>
+                        <option value="3">3年</option>
+                        <option value="4">4年</option>
+                        <option value="5">5年</option>
+                        <option value="6">6年</option>
+                    </select>
+                    <div id="gradeError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email">メールアドレス</label>
+                    <input type="email" id="email" name="email" required>
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-requirements">
+                        パスワードは以下の条件を満たす必要があります：
+                        <ul>
+                            <li id="length-check">12文字以上</li>
+                            <li id="uppercase-check">大文字を含む</li>
+                            <li id="lowercase-check">小文字を含む</li>
+                            <li id="number-check">数字を含む</li>
+                            <li id="special-check">特殊文字を含む</li>
+                        </ul>
+                    </div>
+                    <div class="password-strength">
+                        <div id="password-strength-bar" class="password-strength-bar"></div>
+                    </div>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">パスワード（確認）</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    <div id="confirmPasswordError" class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <button type="submit">登録</button>
+                </div>
+                <div class="form-links">
+                    <a href="login.html">すでにアカウントをお持ちの方はこちら</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="./app/javascript/config.js"></script>
+    <script src="./app/javascript/function_logic.js"></script>
+    <script src="./app/javascript/student_registration.js"></script>
+</body>
+</html> 
