@@ -249,28 +249,148 @@ function updateLoginAttempts(success) {
   }
 }
 
-// ログイン処理を強化した関数
+// パスワードの強度チェック強化
+function checkPasswordStrength(password) {
+  const checks = {
+    length: password.length >= 12,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    numbers: /[0-9]/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    noCommon: !['password123', 'qwerty123', 'admin123'].includes(password.toLowerCase())
+  };
+
+  const strength = Object.values(checks).filter(Boolean).length;
+  const messages = [];
+
+  if (!checks.length) messages.push('パスワードは12文字以上必要です');
+  if (!checks.uppercase) messages.push('大文字を含める必要があります');
+  if (!checks.lowercase) messages.push('小文字を含める必要があります');
+  if (!checks.numbers) messages.push('数字を含める必要があります');
+  if (!checks.special) messages.push('特殊文字を含める必要があります');
+  if (!checks.noCommon) messages.push('一般的なパスワードは使用できません');
+
+  return {
+    strength,
+    isValid: strength >= 5,
+    messages
+  };
+}
+
+// ログイン履歴の記録
+async function logLoginAttempt(userId, success, ipAddress, userAgent) {
+  try {
+    const loginLog = {
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      success,
+      ipAddress,
+      userAgent,
+      userId: userId || null
+    };
+
+    await db.collection('loginHistory').add(loginLog);
+
+    // ログイン履歴の保持期間を設定（90日）
+    const retentionDate = new Date();
+    retentionDate.setDate(retentionDate.getDate() - 90);
+    
+    // 古いログの削除
+    const oldLogs = await db.collection('loginHistory')
+      .where('timestamp', '<', retentionDate)
+      .get();
+    
+    const batch = db.batch();
+    oldLogs.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+  } catch (error) {
+    console.error('ログイン履歴の記録に失敗:', error);
+  }
+}
+
+// アカウントロックアウト通知
+async function sendLockoutNotification(userId, email) {
+  try {
+    const userDoc = await db.collection('users').doc(userId).get();
+    const userData = userDoc.data();
+
+    // メール通知の送信
+    const mailOptions = {
+      to: email,
+      subject: '【重要】アカウントロックアウトのお知らせ',
+      text: `
+        アカウントが一時的にロックされました。
+        
+        ロック解除時間: ${new Date(loginAttempts.lockedUntil).toLocaleString()}
+        
+        セキュリティ上の理由により、複数回のログイン失敗が検出されました。
+        アカウントのセキュリティを確保するため、30分間のロックアウトを実施しています。
+        
+        このメールに心当たりがない場合は、至急パスワードの変更をお願いします。
+      `
+    };
+
+    // Firebase Cloud Functionsを使用してメール送信
+    await firebase.functions().httpsCallable('sendEmail')(mailOptions);
+
+    // 管理者への通知
+    const adminNotification = {
+      userId,
+      email,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      type: 'account_lockout',
+      status: 'pending'
+    };
+
+    await db.collection('securityAlerts').add(adminNotification);
+  } catch (error) {
+    console.error('ロックアウト通知の送信に失敗:', error);
+  }
+}
+
+// ログイン処理の強化
 async function enhancedLogin(email, password) {
   try {
     // 入力値のバリデーション
     const validatedEmail = validateInput(email, 'email');
     const validatedPassword = validateInput(password, 'password');
     
+    // パスワードの強度チェック
+    const passwordCheck = checkPasswordStrength(validatedPassword);
+    if (!passwordCheck.isValid) {
+      throw new Error(`パスワードが要件を満たしていません: ${passwordCheck.messages.join(', ')}`);
+    }
+    
     // ログイン試行回数をチェック
     checkLoginAttempts(validatedEmail);
+    
+    // ユーザーエージェントとIPアドレスの取得
+    const userAgent = navigator.userAgent;
+    const ipAddress = await fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(data => data.ip);
     
     // Firebase認証
     const userCredential = await firebase.auth().signInWithEmailAndPassword(validatedEmail, validatedPassword);
     
     // ログイン成功時の処理
     updateLoginAttempts(true);
-    await setPersistence();  // セッション永続性の設定
-    startSessionTimer();     // セッションタイマーの開始
+    await logLoginAttempt(userCredential.user.uid, true, ipAddress, userAgent);
+    await setPersistence();
+    startSessionTimer();
     
     return userCredential.user;
   } catch (error) {
     // ログイン失敗時の処理
     updateLoginAttempts(false);
+    await logLoginAttempt(null, false, ipAddress, userAgent);
+    
+    // アカウントロックアウト時の通知
+    if (loginAttempts.lockedUntil) {
+      await sendLockoutNotification(null, email);
+    }
+    
     throw error;
   }
 }
