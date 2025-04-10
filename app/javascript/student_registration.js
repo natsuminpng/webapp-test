@@ -1,5 +1,4 @@
 // Firebase初期化
-firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // パスワード強度の視覚的フィードバック
