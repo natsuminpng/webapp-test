@@ -1,5 +1,17 @@
 // Firebase初期化
+let firebaseApp;
+try {
+    firebaseApp = firebase.app();
+} catch (e) {
+    firebaseApp = firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
+
+// メールアドレスのバリデーション関数
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
 
 // パスワード強度の視覚的フィードバック
 document.getElementById('password').addEventListener('input', function(e) {
@@ -50,11 +62,13 @@ async function checkStudentIdExists(studentId) {
     try {
         const snapshot = await db.collection('users')
             .where('studentId', '==', studentId)
+            .limit(1)
             .get();
         
         return !snapshot.empty;
     } catch (error) {
         console.error('学籍番号チェックエラー:', error);
+        // エラーが発生した場合は、重複していないと仮定して処理を続行
         return false;
     }
 }
@@ -64,11 +78,13 @@ async function checkEmailExists(email) {
     try {
         const snapshot = await db.collection('users')
             .where('email', '==', email)
+            .limit(1)
             .get();
         
         return !snapshot.empty;
     } catch (error) {
         console.error('メールアドレスチェックエラー:', error);
+        // エラーが発生した場合は、重複していないと仮定して処理を続行
         return false;
     }
 }
